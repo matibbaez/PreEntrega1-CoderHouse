@@ -1,11 +1,12 @@
 // Declaración de variantes
 
-let costoNoches = 0
+let costoNoche = 0
 let costoCiudad = 0
 let costoCoche = 0
 let noches = ""
 let diasCoche = ""
 let ciudad = ""
+let costoDeVehiculo;
 
 // Ingresar nombre
 
@@ -15,20 +16,27 @@ let nombre = prompt("Ingrese su nombre:")
 
 function saludo(){
   alert(`Bienvenido ${nombre}, sigue los pasos para calcular los gastos de tu próximo viaje`);
-}
+};
 
-let metodoPago = prompt("Elija su método de pago: Credito, Debito")
+let metodoPago = prompt("Elija su método de pago: Crédito, Débito").toLowerCase();
 
-while (metodoPago == "Credito" || "Debito"){
-    let cuotasPago = parseInt(prompt("Elija sus cuotas sin interés (hasta 12 cuotas)"));
-    if (cuotasPago <12 ){
-        alert(`${nombre}, su pago será financiado en ${cuotasPago} cuotas sin interés.`);
-        break;
-    } else if(cuotasPago >12 ){
-        alert(`${nombre}, la cantidad de cuotas elegidas no están permitidas.
-        Eligió ${cuotasPago} cuotas, por favor intente nuevamente.`)
+if (metodoPago === "debito") {
+  alert("Genial, continuemos con la compra:");
+  hotel(); // Llamar a la función hotel() si el método de pago es "débito"
+} else if (metodoPago === "credito") {
+  let cuotasPago;
+  while (true) {
+    cuotasPago = parseInt(prompt("Elija sus cuotas sin interés (hasta 12 cuotas)"));
+    if (cuotasPago < 13) {
+      alert(`Su pago será financiado en ${cuotasPago} sin interés.`);
+      hotel(); // Llamar a la función hotel() si el método de pago es "crédito"
+      break;
+    } else {
+      alert(`La cantidad de cuotas elegidas (${cuotasPago}) no está permitida. Intente en otro momento.`);
     }
+  }
 }
+
 
 
 // Funcion para ingresar el número de noches
@@ -69,131 +77,110 @@ function hotel(){
 
 // Funcion para elegir la ciudad indicada
 
-function vueloCiudad(){
-    ciudad = prompt("Ingresa una ciudades: Buenos Aires, Rio de Janeiro, Montevideo, Santiago");
+let costoDeCiudad;
 
-    costoCiudad = 0
+function vueloCiudad() {
+  const vuelos = [
+    { ciudad: "Buenos Aires", costo: 150 },
+    { ciudad: "Rio de Janeiro", costo: 250 },
+    { ciudad: "Montevideo", costo: 125 },
+    { ciudad: "Santiago", costo: 100 }
+  ];
 
-    switch(ciudad){
-        case "Buenos Aires":
-            costoCiudad = 150
-            break;
-        case "Rio de Janeiro":
-            costoCiudad = 250
-            break;
-        case "Montevideo":
-            costoCiudad = 125
-            break;
-        case "Santiago":
-            costoCiudad = 100
-            break;    
-    }
+  let ciudad = prompt("Ingresa una de las siguientes ciudades: Buenos Aires, Rio de Janeiro, Montevideo y Santiago");
 
-    if (costoCiudad <= 0){
-        alert("No hay vuelos disponibles para esa ciudad. Intente nuevamente.")
-    }else
-        alert(`Tu vuelo a ${ciudad} son ${costoCiudad}$`)
-    console.log(ciudad);
+  const vuelo = vuelos.find(function(vuelo) {
+    return vuelo.ciudad.toLowerCase() === ciudad.toLowerCase();
+  });
+
+  if (!vuelo) {
+    alert("Actualmente no hay vuelos disponibles para esa ciudad. Intente nuevamente.");
+    vueloCiudad(); // Volver a pedir la ciudad
+    return;
+  }
+
+  costoDeCiudad = vuelo.costo;
+
+  alert(`Tu vuelo a ${vuelo.ciudad} cuesta ${costoDeCiudad}$`);
+  console.log(vuelo.ciudad);
 }
+
+let vueloConfirmacion = "";
+
+do {
+  vueloCiudad();
+
+  vueloConfirmacion = prompt("¿Desea continuar?").toLowerCase();
+
+  if (vueloConfirmacion === "si") {
+    alert("De acuerdo, continuemos:");
+    alquilerVehiculo();
+    resultado();
+    break; // Salir del ciclo después de llamar a alquilerVehiculo() y resultado()
+  } else if (vueloConfirmacion === "no") {
+    alert("De acuerdo.");
+    break; // Salir del ciclo si la respuesta es "no"
+  } else {
+    alert("Respuesta inválida. Por favor, responda 'si' o 'no'.");
+  }
+} while (vueloConfirmacion !== "no");
+
+
 
 // Funcion para elegir vehiculo y días a utilizar
 
-function alquilerVehiculo(){
-
-    tipoVehiculo = prompt("Seleccione el vehiculo a utilizar: Auto, Camioneta, Moto")
-    diasVehiculo = prompt("Ingresa los dias que alquilarás un vehiculo. De 5 a 8 días");
-
-    switch (tipoVehiculo) {
-      case "Auto":
-        switch(diasVehiculo){
-          case "5":
-              costoVehiculo = 400
-              break;
-          case "6":
-              costoVehiculo = 450
-              break;
-          case "7":
-              costoVehiculo= 500
-              break;
-          case "8":
-              costoVehiculo = 550
-              break;
-          case "0":
-              costoVehiculo = 0
-              break;
-      }
-
-      case "Camioneta":
-        switch(diasVehiculo){
-          case "5":
-              costoVehiculo = 500
-              break;
-          case "6":
-              costoVehiculo = 600
-              break;
-          case "7":
-              costoVehiculo= 625
-              break;
-          case "8":
-              costoVehiculo = 700
-              break;
-          case "0":
-              costoVehiculo = 0
-              break;
-      }
-
-      case "Moto":
-        switch(diasVehiculo){
-          case "5":
-              costoVehiculo = 300
-              break;
-          case "6":
-              costoVehiculo = 350
-              break;
-          case "7":
-              costoVehiculo= 400
-              break;
-          case "8":
-              costoVehiculo = 450
-              break;
-          case "0":
-              costoVehiculo = 0
-              break;
-          default:
-            "Ingrese un valor valido"
-      }
+function alquilerVehiculo() {
+  const vehiculos = {
+    auto: {
+      nombre: "Auto",
+      costos: [400, 450, 500, 550]
+    },
+    camioneta: {
+      nombre: "Camioneta",
+      costos: [500, 600, 625, 700]
+    },
+    moto: {
+      nombre: "Moto",
+      costos: [300, 350, 400, 450]
     }
+  };
 
-    if (costoVehiculo < 0){
-        alert("No hay precios disponibles")
-        costoCoche = 0
+  const tipoVehiculo = prompt("Seleccione el vehiculo a utilizar: Auto, Camioneta, Moto");
+  const diasVehiculo = prompt("Ingresa los dias que alquilarás un vehiculo. De 5 a 8 días");
+
+  const vehiculoSeleccionado = vehiculos[tipoVehiculo.toLowerCase()];
+
+  if (!vehiculoSeleccionado) {
+    alert("Tipo de vehículo inválido. Intente nuevamente.");
+  } else {
+    const indexCosto = parseInt(diasVehiculo) - 5;
+    costoDeVehiculo = vehiculoSeleccionado.costos[indexCosto];
+    if (!costoDeVehiculo) {
+      alert("Número de días inválido. Intente nuevamente.");
+    } else {
+      alert(`Tu precio de alquiler de ${vehiculoSeleccionado.nombre} para ${diasVehiculo} días es de: ${costoDeVehiculo}$`)
     }
-    else
-        alert(`Tu precio de alquiler de ${tipoVehiculo} para: ${diasVehiculo} días es de ${costoVehiculo}$`)
-
-    console.log(diasCoche);
-}
+  };
+};
 
 // Funcion final, resultado de la cotización
 
 function resultado(){
-    alert("Días de hotel: " + costoNoche + " || Ciudad destino: " + costoCiudad + " || Días de coche alquilados: " + costoVehiculo);
-    suma = costoCiudad + costoVehiculo + costoNoche;
-    alert(`${nombre}, su presupuesto final es de: $` + suma);
-}
-
-
+  alert("Días de hotel: " + costoNoche + " || Ciudad destino: " + costoDeCiudad + " || Días de coche alquilados: " + costoDeVehiculo);
+  suma = costoDeCiudad + costoDeVehiculo + costoNoche;
+  alert(`${nombre}, su presupuesto final es de: $` + suma);
+};
 
 function ejecutarSimulador(){
-    saludo();
-    hotel();
-    vueloCiudad();
-    alquilerVehiculo();
-    resultado();
-    pagoFinal()
-}
+  saludo();
+  hotel();
+  vueloCiudad();
+  alquilerVehiculo();
+  resultado();
+};
 
 ejecutarSimulador();
+
 
 
 

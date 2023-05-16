@@ -79,8 +79,16 @@ header{
 }
 
 .hero-title{
-    font-size: 80px;
+    font-size: 4rem;
     font-weight: bold;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+}
+
+.hero-subtitle span {
+    font-weight: 800
 }
 
 .rounded-button{
@@ -162,4 +170,43 @@ input{
 
 .button-search:hover, .rounded-button:hover{
     background-color: rgb(55, 80, 128);
+}
+
+/* QUIENES SOMOS */
+
+.hero2{
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+.hero-content2{
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 2;
+}
+
+.image-hero2{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(45deg, #121212b7, #121212b7), url(/assets/114377.jpg);
+    background-position: center;
+    background-size: cover;
+}
+
+
+/* VIAJES */
+
+#viajes {
+    display: flex;
+    justify-content: center;
 }
